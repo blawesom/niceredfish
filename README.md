@@ -17,5 +17,10 @@ Basic Error handling must be implemented.
 
 ### Technical stack:
 List will expand with the project life.
-- Python
+- Python 3.7
 - SQLite
+
+## Step 1
+- Simple python webserver that answer to the query parameter
+- Implement logging
+- Implement testing
