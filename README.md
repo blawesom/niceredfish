@@ -24,3 +24,6 @@ List will expand with the project life.
 - Simple python webserver that answer to the query parameter
 - Implement logging
 - Implement testing
+
+I underestimated the time and complexity to prepare a simple python server "as production ready as possible".
+I will investigate and setup deployment with wsgi for the next step.
