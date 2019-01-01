@@ -3,6 +3,12 @@
 # __author__ = 'Benjamin'
 
 import flask
+import logging
+from logging.handlers import RotatingFileHandler
+
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 
 app = flask.Flask(__name__)
 
@@ -17,4 +23,7 @@ def hello(name):
                             'response': 'hello {}'.format(name)})
 
 if __name__ == '__main__':
+    file_handler = RotatingFileHandler('/tmp/server_activity.log', 'a', 50000000, 5)
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
     app.run(host='0.0.0.0', port=80, debug=True)
