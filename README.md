@@ -18,9 +18,21 @@ Basic Error handling must be implemented.
 ### Technical stack:
 List will expand with the project life.
 - Python 3.7
+- Flask
 - SQLite
 
 ## Step 1
 - Simple python webserver that answer to the query parameter
 - Implement logging
 - Implement testing
+
+I underestimated the time and complexity to prepare a simple python server "as production ready as possible".
+I will investigate and setup deployment with wsgi for the next step.
+
+## Step 2
+- Implement WSGI for deployment
+- Store request and IP of origin for different behavior:
+  - _'Nice to meet you'_ for the first request (name, source ip)
+  - _'Hello again'_ the next times
+  - Store only 1hr of requests (redfish has short memory)
+- Add Ansible deployment for the server (Fedora)
