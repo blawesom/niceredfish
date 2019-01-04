@@ -20,8 +20,8 @@ from models import Entries, Base
 app = flask.Flask(__name__)
 
 # query db to return list of entry for a given ip
-def get_entry_list(ip):
-    return session.query(Entries).filter_by(ip=ip).all()
+def get_entry_list(ip, name):
+    return session.query(Entries).filter_by(ip=ip, name=name).all()
 
 # default route for server status
 @app.route('/', methods=['GET'])
@@ -32,7 +32,7 @@ def status():
 # dynamic route to respond to a first name 
 @app.route('/<name>', methods=['GET'])
 def hello(name):
-    if get_entry_list(flask.request.remote_addr):
+    if get_entry_list(flask.request.remote_addr, name):
         response = 'nice to see you again {}'.format(name)
     else:
         response = 'nice to meet you {}'.format(name)
