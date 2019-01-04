@@ -27,7 +27,6 @@ List will expand with the project life.
 - Implement testing
 
 I underestimated the time and complexity to prepare a simple python server "as production ready as possible".
-<<<<<<< HEAD
 I will investigate and setup deployment with wsgi for the next step.
 
 ## Step 2
@@ -37,6 +36,3 @@ I will investigate and setup deployment with wsgi for the next step.
   - _'Hello again'_ the next times
   - Store only 1hr of requests (redfish has short memory)
 - Add Ansible deployment for the server (Fedora)
-=======
-I will investigate and setup deployment with wsgi for the next step.
->>>>>>> 8f90d29d5de6f70db5b8151f570dd768f7876fff

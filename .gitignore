@@ -1,6 +1,7 @@
 *.pyc
 .vscode
 
+**/*.retry
 **/venv/*
 **/__pycache__/*
 **/.pytest_cache/*
