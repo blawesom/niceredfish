@@ -27,12 +27,18 @@ List will expand with the project life.
 - Implement testing
 
 I underestimated the time and complexity to prepare a simple python server "as production ready as possible".
-I will investigate and setup deployment with wsgi for the next step.
+I will investigate and setup automated deployment with wsgi for the next steps.
 
 ## Step 2
-- Implement WSGI for deployment
 - Store request and IP of origin for different behavior:
   - _'Nice to meet you'_ for the first request (name, source ip)
   - _'Hello again'_ the next times
   - Store only 1hr of requests (redfish has short memory)
-- Add Ansible deployment for the server (Fedora)
+- Add Ansible deployment for the server (CentOS)
+- Setup Supervisor for autostart/restart as a service
+- Implement functionnal testing (will be carried over)
+
+Fedora and Ansible do not work very well together so I switched to CentOS 7 (on which I have more experience)
+uWSGI will be implemented alongside NGINX and SSL certificate.
+
+Next steps might need infrastructure setup as well.
