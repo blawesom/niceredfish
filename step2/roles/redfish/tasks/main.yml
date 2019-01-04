@@ -1,0 +1,84 @@
+###################
+# Set users and hostname
+###################
+#  - name: Set hostname
+#    hostname: 
+#         name: "{{ inventory_hostname }}"
+
+###################
+# Mist tools
+###################
+- name: Install repo
+  package:
+    name : https://centos7.iuscommunity.org/ius-release.rpm
+    state : present
+
+- name: Install prereq
+  package :
+    name : ['wget', 'curl', 'vim', 'git', 'htop']
+    state: present
+
+###################
+# Security
+###################
+- name: Install fail2ban
+  package:
+    name: fail2ban
+    state: present
+
+- name: Start fail2ban service
+  service: 
+    name : fail2ban
+    state : started
+    enabled : true
+
+###################
+# Supervisor
+###################
+- name: Install Supervisor
+  package: 
+    name : supervisor
+    state : latest
+
+- name: Conf Supervisor
+  template: 
+    src : supervisord.conf.j2
+    dest : /etc/supervisord.conf
+
+- name: Start supervisor service
+  service: 
+    name : supervisord 
+    state : started
+    enabled : true
+
+###################
+# Python files and reqs
+###################
+- name: Creates directory
+  file:
+    path: /opt/redfish
+    state: directory 
+
+- name: Copy server files
+  copy:
+    src: "{{ item }}"
+    dest: "/opt/redfish/"
+  with_fileglob:
+    - "./files/*"
+
+- name: Install python
+  package: 
+    name: [python36u, python36u-pip]
+    state: latest
+
+- name: Install requirements
+  pip:
+    requirements: /opt/redfish/requirements.txt
+    executable: pip3.6
+
+- name: Copy conf for Supervirsord
+  template: 
+    src : server.conf.j2
+    dest : /etc/supervisord.d/server.conf
+  notify:
+  - restart supervisor
