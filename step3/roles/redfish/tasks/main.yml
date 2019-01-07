@@ -44,9 +44,9 @@
 ###################
 # Front Web management
 ###################
-- name: Install nginx, wsgi
+- name: Install nginx, gunicorn
   package: 
-    name: [nginx, uwsgi]
+    name: [nginx, python36u-gunicorn]
     state: latest
 
 - name: Configure nginx
