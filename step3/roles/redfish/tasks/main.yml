@@ -60,6 +60,7 @@
     state: started
     enabled: true
 
+
 ###################
 # Python files and reqs
 ###################
@@ -84,6 +85,12 @@
   pip:
     requirements: /opt/redfish/requirements.txt
     executable: pip3.6
+
+- name: Add cronjob 
+  cron:
+    name: "SQL entry deletion"
+    minute: 5
+    job: "/usr/bin/python3.6 /opt/redfish/cron.py"
 
 ###################
 # Supervisor
