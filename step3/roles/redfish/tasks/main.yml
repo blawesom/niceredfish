@@ -44,10 +44,18 @@
 ###################
 # Front Web management
 ###################
-- name: Install nginx, gunicorn
+- name: Install nginx, certbot
   package: 
-    name: [nginx, python36u-gunicorn]
+    name: [nginx, certbot, python2-certbot-nginx]
     state: latest
+
+- name: Install python, gunicorn
+  package: 
+    name: [python36u, python36u-pip, python36u-gunicorn]
+    state: latest
+
+- name: Generate certificate
+  shell: "certbot --nginx --test-cert -d redfish.blawesom.com"
 
 - name: Configure nginx
   copy:
@@ -75,11 +83,6 @@
     dest: "/opt/redfish/"
   with_fileglob:
     - "./files/server/*"
-
-- name: Install python
-  package: 
-    name: [python36u, python36u-pip]
-    state: latest
 
 - name: Install requirements
   pip:
