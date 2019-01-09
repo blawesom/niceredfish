@@ -3,6 +3,7 @@
 # __author__ = 'Benjamin'
 
 import os
+import datetime
 import logging
 from logging.handlers import RotatingFileHandler
 
@@ -18,7 +19,10 @@ from models import Entries, Base
 
 # query db to return list of entry beyond point in time
 def get_old_entry_list():
-    return session.query(Entries).filter_by(time_add >1h).all()
+    current_time = datetime.datetime.utcnow()
+    onehour_ago = current_time - datetime.timedelta(hour=1)
+    
+    return session.query(Entries).filter_by(Entries.time_add > onehour_ago).all()
 
 if __name__ == '__main__':
     # configure log file to rotate in 5 files of 5MB
