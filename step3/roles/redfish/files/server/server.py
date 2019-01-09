@@ -16,6 +16,19 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Entries, Base
 
+# configure log file to rotate in 5 files of 5MB
+file_handler = RotatingFileHandler('/var/log/redfish/server_activity.log', 'a', 5000000, 5)
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
+# connect to local sqlite db
+engine = create_engine('sqlite:////tmp/redfish.db')
+if not os.path.isfile('/tmp/redfish.db'):
+    Base.metadata.create_all(engine)
+
+Session = sessionmaker(bind=engine)
+session = Session()
+
 # flask app is declared after the logger to catch it
 app = flask.Flask(__name__)
 
@@ -46,18 +59,8 @@ def hello(name):
                             'response': response})
 
 if __name__ == '__main__':
-    # configure log file to rotate in 5 files of 5MB
-    file_handler = RotatingFileHandler('/var/log/redfish/server_activity.log', 'a', 5000000, 5)
-    file_handler.setFormatter(formatter)
-    logger.addHandler(file_handler)
-
-    # connect to local sqlite db
-    engine = create_engine('sqlite:////tmp/redfish.db')
-    if not os.path.isfile('/tmp/redfish.db'):
-        Base.metadata.create_all(engine)
-
-    Session = sessionmaker(bind=engine)
-    session = Session()
 
     # start application to be available from any IP on port 80
-    app.run(host='127.0.0.1', port=8000)
+    # used only when server.py is directly called
+    # all other configuration has been moved to be imported in the package
+    app.run(host='127.0.0.1', port=8080)
