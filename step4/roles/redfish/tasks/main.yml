@@ -1,0 +1,145 @@
+###################
+# Set users and hostname
+###################
+- name: Set hostname
+  hostname: 
+    name: "redfish"
+
+###################
+# Mist tools
+###################
+- name: Install repo
+  package:
+    name: https://centos7.iuscommunity.org/ius-release.rpm
+    state: present
+
+- name: Install prereq
+  package :
+    name: ['wget', 'curl', 'vim', 'git', 'htop']
+    state: present
+
+- name: Create log dir
+  file:
+    path: /var/log/redfish/
+    state: directory
+
+###################
+# Security
+###################
+- name: Install fail2ban
+  package:
+    name: fail2ban
+    state: present
+
+- name: Start fail2ban service
+  service: 
+    name: fail2ban
+    state: started
+    enabled: true
+
+- name: Change SELinux policy
+  selinux:
+    policy: targeted
+    state: permissive
+
+###################
+# Front Web management
+###################
+- name: Install nginx, certbot
+  package: 
+    name: [nginx, certbot, python2-certbot-nginx]
+    state: latest
+
+- name: Install python, gunicorn
+  package: 
+    name: [python36u, python36u-pip, python36u-gunicorn]
+    state: latest
+
+- name: Start nginx
+  service:
+    name: nginx
+    state: started
+    enabled: true
+
+- name: Generate certificate
+  shell: "certbot --nginx --test-cert --non-interactive -d {{ domain }} -m dummy@blawesom.com --agree-tos"
+  args:
+    creates: "/etc/letsencrypt/live/{{ domain }}/fullchain.pem"
+
+- name: Configure nginx
+  copy:
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+
+- name: Restart nginx service
+  service:
+    name: nginx
+    state: restarted
+
+
+###################
+# Python files and reqs
+###################
+- name: Creates directory
+  file:
+    path: /opt/redfish
+    state: directory 
+
+- name: Creates run directory
+  file:
+    path: /opt/redfish/run
+    state: directory
+
+- name: Copy server files
+  copy:
+    src: "{{ item }}"
+    dest: "/opt/redfish/"
+  with_fileglob:
+    - "./files/redfish/*"
+
+- name: Install requirements
+  pip:
+    requirements: /opt/redfish/requirements.txt
+    executable: pip3.6
+
+- name: Add cronjob 
+  cron:
+    name: "SQL entry deletion"
+    minute: 5
+    job: "/usr/bin/python3.6 /opt/redfish/cron.py"
+
+###################
+# Supervisor
+###################
+- name: Install Supervisor
+  package: 
+    name: supervisor
+    state: latest
+
+- name: Conf Supervisor
+  copy: 
+    src: supervisord.conf
+    dest: /etc/
+
+- name: Start supervisor service
+  service: 
+    name: supervisord 
+    state: started
+    enabled: true
+
+- name: Copy conf for Supervirsord
+  copy: 
+    src: redfish.conf
+    dest: /etc/supervisord.d/
+  notify:
+  - restart supervisor
+  - restart nginx
+
+###################
+# Prepare testing
+###################
+- name: Get cert back to local
+  fetch:
+    src: /etc/letsencrypt/live/{{ domain }}/fullchain.pem
+    dest: /tmp/redfish/fullchain.pem
+    flat: yes
