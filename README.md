@@ -47,6 +47,9 @@ I will investigate and setup automated deployment with wsgi for the next steps.
   - _'Nice to meet you'_ for the first request (name, source ip)
   - _'Hello again'_ the next times
 - Add Ansible deployment for the server (CentOS)
+  - .ansible.cfg contains:
+    > [defaults]\
+    > host_key_checking = False
 - Setup Supervisor for autostart/restart as a service
 - Implement functionnal testing (will be carried over)
 
@@ -62,8 +65,18 @@ Next steps might need infrastructure automated deployment.
 - Moved *fake* template to actual files in ansible directories
 
 It seems that lifetime management might only be ok with a cronjob. I explored event (mysql) and trigger (posgre) but with no satisfaction. Crontab is now deployed and activated through configuration management.
+I did not used letsencrypt ansible module due to lack of understanding of the module behavior and I prefered call certbot shell command directly.
 
-Topics to investigate:
+## Step 4
+
+- Package python application (rolled back)
+- Proxy converted from port to local socket
+- Test to check deployed SSL certificate
+
+I spent an incredible amount of time debugging packaging, path to files to include. My conclusion is when shipping an application, I should not package it except if it meant to be used as an import/dependency. Standalone application is meant to be in /opt/.
+Fun fact, if you want to use nginx after certbot, you must start it beforehad or it wont be callable by systemd (Thanks to a long github bug report thread)
+
+### Topics to investigate
 
 - SELINUX
 - CI/CD
