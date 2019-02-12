@@ -72,9 +72,11 @@ I did not used letsencrypt ansible module due to lack of understanding of the mo
 - Package python application (rolled back)
 - Proxy converted from port to local socket
 - Test to check deployed SSL certificate
+- Freeze for release
 
 I spent an incredible amount of time debugging packaging, path to files to include. My conclusion is when shipping an application, I should not package it except if it meant to be used as an import/dependency. Standalone application is meant to be in /opt/.
 Fun fact, if you want to use nginx after certbot, you must start it beforehad or it wont be callable by systemd (Thanks to a long github bug report thread)
+The --test-cert or --staging parameter does not provide a root CA that can be tested in the last test, so I removed it alltogether. Every run now deploy a fully-fledge SSL certificate.
 
 ### Topics to investigate
 
